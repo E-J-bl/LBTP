@@ -2,6 +2,37 @@
 # i can develop any algorithms in python before transferring to c++
 
 class memory():
+    """
+    A representation of DRAM that simulates direct memory editing that is commonly used in c and other middle level langauges
+
+    Attributes
+    ----------
+    size: int
+        The number of addresses 
+    sreg: int
+        the number of bits at each address
+    aloc: dict
+        The representation of which spaces in memory are allocated
+    Methods
+    -------
+    __getitem__(key:int)
+        How the user addresses into memory 
+        
+    __setitems__(key:int,value:int)
+        How the user sets the memory value at a given address (given by key)
+        does not support bulk allocation and does not protect the user from writing over previous data 
+        WARNING
+        _______
+            Do not use. it does not protect the user and does not abstract away any proccess 
+            if misused it will cause memory issues and can cause your program to start behaving unexpected 
+            
+    malloc(buffer:int)
+        How to allocate a number of addresses to a process 
+        buffer is the number of memory spaces you want
+        Returns
+        _______
+            returns a start and end address where the buffer is set
+    """
     def __init__(self, address_count, register_size):
         self.size = address_count
         self.sreg = register_size
