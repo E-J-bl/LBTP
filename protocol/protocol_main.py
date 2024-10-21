@@ -11,7 +11,7 @@
 # }
 # therefor any device in the network would have the protocol declared as part of the creation oof the application
 
-class conected():
+class connected():
     def __init__(self):
         self.val = False
 
@@ -43,7 +43,7 @@ class LBTP():
         # 16(GPIO 27)
         # 17(GPIO 25)
         # 18(GPIO 26)
-        self.pins = {i: [pins[i], conected()] for i in range(len(pins))}
+        self.pins = {i: [pins[i], connected()] for i in range(len(pins))}
         # i need to rewrite this so it can write to the pin on the board
         SET_UP_PINS()
         self.address_list = PING_LOCAL()
