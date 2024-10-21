@@ -80,6 +80,28 @@ class memory():
 #         i have refactored the code to the specification above
 
 class pin():
+    """
+    A class to simulate a pin of the board 
+
+    Attributes
+    ----------
+    board:
+        this is the esp_ins board the pin is bound to 
+    destination:
+        this is the pin that it may be linked to. does not need to be defined at initialisation
+    Methods
+    -------
+    send_data(data:any)
+        This function is left undefined untill the protocol called to define it
+        it would typically look like 
+            self.destination.interrupt(data)
+            
+    interrupt()
+        this is completely undefined until any process is allocated to the pin
+        it is called by any process or simulated deviced that sends data to another pin 
+    """
+    
+    
     def __init__(self, board_name):
         # A unique class was made for the pin so that when the esp_ins
         # sends data to a pin it literally sends the data out of its memory into another place
@@ -103,11 +125,43 @@ class pin():
         self.received_data = []
 
     def send_data(self, data):
-        self.destination.received_data.append(data)
-    # the actual functionality of what happens when a pin receives data will be covered by the protocol
+        pass
+        # the actual functionality of what happens when a pin receives data will be covered by the protocol
+    def interrupt(self):
+        pass
+        
 
 
 class esp_ins():
+    """
+    This is a simulated board and is used to simulate the network
+    at the current version it can not execute code on itself and is only usefeul for simulating network structures
+
+    Attributes
+    ----------
+    memory:
+        this is a instance of a memory class which has 80000 addresses each are 32 bit
+        for a overall DRAM of 320kb
+    pins:
+        this is a dictionary of 40 pin instances 
+        all of the pins are defined with the same behaviour unlike the real board however you are only advised to use
+        certain pins to ensure any behaviour on the emulation lines up with your experience with real esp 32s
+        the exact pins that should be used can be found at the protocol definition in the protocol file 
+
+        
+    Methods
+    _______
+    connect_pin(pin, address)
+        this acts like wiring up two pins 
+        the pin argument is a number from 0-39
+        the address can be given in a few ways
+            the pin itself can be entered as a pointer to the address
+            or a reference to the pin can be provived in this format
+                Destination_Boardl.pins[Pin_number]
+    send(pin, data)
+        to send data you select a pin and the data you want to send along that pin
+        the pin does not need to be connected and the program will have no issue with sending data to a pin that is not connected
+    """
     # the structure of this simulated network is
     # nodes of esp_ins (which stand for esp32 instances)
     # which are connected directly to their neighbours
@@ -144,9 +198,7 @@ class esp_ins():
         # As this is a emulator of an esp32 i have to create a function to
         # represent the act of plugging a pin into a wire
         self.pins[pin] = address
-        # An address will be a custom data type representing a board and a specific pin
-        # however for now the address with be the individual memory address of the pin it wants to connect to
-
+        
         return 0
 
     def send(self, pin, data):
