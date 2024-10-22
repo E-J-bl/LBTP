@@ -9,9 +9,17 @@
 #  SerialBT.begin("ESP32test"); //Bluetooth device name
 #  Serial.println("The device started, now you can pair it with bluetooth!");
 # }
-# therefor any device in the network would have the protocol declared as part of the creation oof the application
+# therefore any device in the network would have the protocol declared as part of the creation oof the application
 
 class connected():
+    """
+    This is a class made to make the code more readable nothing else
+    IT IS NOT FOR THE USER AND DOES NOTHING EXCEPT HOLD A TRUE OR FLASE
+    Attributes 
+    _________
+    val
+        true or false 
+    """
     def __init__(self):
         self.val = False
 
