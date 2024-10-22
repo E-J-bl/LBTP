@@ -49,9 +49,17 @@ class LBTP():
         self.address_list = PING_LOCAL()
         self.address = CREATE_GLOBAL_ADDRESS(self.address_list)
 
-
+    def set_up_pins(self):
+        
 #     i need to write a function to ping all pins and see if any are connected
 #     once a connection is confirmed request the list of addresses
 #     from the connected esp32.
 #     from there create an address given the list of all addresses
 #
+
+
+"""
+List of special characters that are used in the data transfer
+i will be using a subset of the uni-code characters called the utf-32 that is specialised for 32 bits
+
+"""
