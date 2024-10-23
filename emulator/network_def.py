@@ -1,5 +1,7 @@
-# each esp_ins will be a instance of a simulated esp32 board so that
+# each esp_ins will be an instance of a simulated esp32 board so that
 # i can develop any algorithms in python before transferring to c++
+import math
+
 
 class memory():
     """
@@ -33,10 +35,14 @@ class memory():
         _______
             returns a start and end address where the buffer is set
     """
+
     def __init__(self, address_count, register_size):
         self.size = address_count
         self.sreg = register_size
         self.aloc = dict()
+        # for explanation of this look at the malloc implementation
+        for i in range(math.ceil(address_count / register_size + 1)):
+            self.aloc[i] = bin(0)
 
     def __getitem__(self, key: int):
         if key > self.size:
@@ -63,7 +69,30 @@ class memory():
         if value > 2 ** 32:
             raise ValueError
 
-        self.aloc[key] = value
+        self.aloc[key] = bin(value)
+
+    def malloc(self, buffer):
+        found_space = False
+
+        adre = 0
+        while found_space:
+            continuous_found = 0
+            for i in range(self.sreg):
+                if self.aloc[adre][i] == "0":
+                    continuous_found += 1
+                else:
+                    continuous_found = 0
+                if continuous_found == buffer:
+                    mask = "0" * 32
+                    for k in range(i - continuous_found, i):
+                        mask[k] = 1
+
+                    self.aloc[adre] = bin(int(self.aloc[adre], 2) + int(mask, 2))
+                    return adre*32+i
+            adre+=1
+            if adre>math.ceil(self.size / self.sreg + 1):
+                found_space=True
+        return bin(0)
 
 
 #         change so that the code return a key (a pointer)
@@ -100,8 +129,7 @@ class pin():
         this is completely undefined until any process is allocated to the pin
         it is called by any process or simulated deviced that sends data to another pin 
     """
-    
-    
+
     def __init__(self, board_name):
         # A unique class was made for the pin so that when the esp_ins
         # sends data to a pin it literally sends the data out of its memory into another place
@@ -115,21 +143,20 @@ class pin():
         # therefore creating a layer of abstraction in a separate class for the pin would protect the system
         # from errors and would allow me to define the behavior of a pin in a cleaner layer
 
-        self.destination:pin
+        self.destination: pin
         self.board = board_name
         # this is to let the pin know which board it is bound
         # to the board will always know which pins it has however
         # when the pin receives data it needs to know where to send the data to
-
 
         self.received_data = []
 
     def send_data(self, data):
         pass
         # the actual functionality of what happens when a pin receives data will be covered by the protocol
+
     def interrupt(self):
         pass
-        
 
 
 class esp_ins():
@@ -144,7 +171,7 @@ class esp_ins():
         for a overall DRAM of 320kb
     pins:
         this is a dictionary of 40 pin instances 
-        all of the pins are defined with the same behaviour unlike the real board however you are only advised to use
+        all the pins are defined with the same behaviour unlike the real board however you are only advised to use
         certain pins to ensure any behaviour on the emulation lines up with your experience with real esp 32s
         the exact pins that should be used can be found at the protocol definition in the protocol file 
 
@@ -162,6 +189,7 @@ class esp_ins():
         to send data you select a pin and the data you want to send along that pin
         the pin does not need to be connected and the program will have no issue with sending data to a pin that is not connected
     """
+
     # the structure of this simulated network is
     # nodes of esp_ins (which stand for esp32 instances)
     # which are connected directly to their neighbours
@@ -198,7 +226,7 @@ class esp_ins():
         # As this is a emulator of an esp32 i have to create a function to
         # represent the act of plugging a pin into a wire
         self.pins[pin] = address
-        
+
         return 0
 
     def send(self, pin, data):
