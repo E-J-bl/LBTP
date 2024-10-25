@@ -1,6 +1,7 @@
 # each esp_ins will be an instance of a simulated esp32 board so that
 # i can develop any algorithms in python before transferring to c++
 import math
+import numpy as np
 
 
 class Memory():
@@ -51,7 +52,7 @@ class Memory():
             raise KeyError
         return self.aloc[key]
 
-    def __setitems__(self, key: int, value: int):
+    def __setitem__(self, key: int, value: int):
         #         abstract so that the process setting the value
         #         does not need to know the address that it is setting to
         #
@@ -89,22 +90,39 @@ class Memory():
 
                     self.aloc[adre] = bin(int(self.aloc[adre], 2) + int(mask, 2))
                     print(True)
-                    return adre*32+i
-            adre+=1
-            if adre>math.ceil(self.size / self.sreg + 1):
-                found_space=True
-                #that is not working  ahhhhhh
+                    return adre * 32 + i
+            adre += 1
+            if adre > math.ceil(self.size / self.sreg + 1):
+                found_space = True
+                # that is not working  ahhhhhh
 
         return bin(0)
-    def __str__(self):
-        output=[]
 
-        for address in range(1,self.size+1):
+
+    def __str__(self):
+
+        output = ()
+
+        for address in range(1, self.size + 1):
             if address in self.aloc:
-                output.append(f"{self.aloc[address]:<{self.sreg+3}}{address}\n")
+                output= output + (f"{self.aloc[address]:<{self.sreg + 3}}{address:<12}|",)
             else:
-                output.append(f"{bin(0):<{self.sreg+3}}{address}\n")
-        return "".join(output)
+                output= output + (f"{bin(0):<{self.sreg + 3}}{address:<12}|",)
+
+        output = [output[i:i + 100] for i in range(0, len(output), 100)]
+        for part in range(len(output)):
+            output[part] = [output[part][i:i + 20] for i in range(0, len(output[part]), 20)]
+
+            output[part] = tuple(zip(*output[part]))
+
+            output[part] = tuple("".join(output[part][i]) for i in range(len(output[part])))
+
+            output[part] = "\n".join(output[part]+(("-" * 130)+"\n",))
+
+        outp = "Current memory state:\n"+"_"*130+"\n"+"".join(output)
+
+        return outp
+
 
 #         change so that the code return a key (a pointer)
 #         to where ever called it to act as the reference to that variable
