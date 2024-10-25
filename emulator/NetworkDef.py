@@ -41,7 +41,7 @@ class Memory():
         self.sreg = register_size
         self.aloc = dict()
         # for explanation of this look at the malloc implementation
-        for i in range(math.ceil(address_count / register_size + 1)):
+        for i in range(math.ceil(address_count / (register_size + 1))):
             self.aloc[i] = bin(0)
 
     def __getitem__(self, key: int):
@@ -88,16 +88,22 @@ class Memory():
                         mask[k] = 1
 
                     self.aloc[adre] = bin(int(self.aloc[adre], 2) + int(mask, 2))
+                    print(True)
                     return adre*32+i
             adre+=1
             if adre>math.ceil(self.size / self.sreg + 1):
                 found_space=True
+                #that is not working  ahhhhhh
+
         return bin(0)
     def __str__(self):
         output=[]
-        format=f"{0:<len(self.sreg)}{0:32}\n"
-        for address,value in self.aloc.items():
-            output.append(format.format(value,address))
+
+        for address in range(1,self.size+1):
+            if address in self.aloc:
+                output.append(f"{self.aloc[address]:<{self.sreg+3}}{address}\n")
+            else:
+                output.append(f"{bin(0):<{self.sreg+3}}{address}\n")
         return "".join(output)
 
 #         change so that the code return a key (a pointer)
