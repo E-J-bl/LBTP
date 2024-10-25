@@ -3,7 +3,7 @@
 import math
 
 
-class memory():
+class Memory():
     """
     A representation of DRAM that simulates direct memory editing that is commonly used in c and other middle level langauges
 
@@ -93,7 +93,12 @@ class memory():
             if adre>math.ceil(self.size / self.sreg + 1):
                 found_space=True
         return bin(0)
-
+    def __str__(self):
+        output=[]
+        format=f"{0:<len(self.sreg)}{0:32}\n"
+        for address,value in self.aloc.items():
+            output.append(format.format(value,address))
+        return "".join(output)
 
 #         change so that the code return a key (a pointer)
 #         to where ever called it to act as the reference to that variable
@@ -108,7 +113,7 @@ class memory():
 #         and so that they can claim continuous space after
 #         i have refactored the code to the specification above
 
-class pin():
+class Pin():
     """
     A class to simulate a pin of the board 
 
@@ -143,7 +148,7 @@ class pin():
         # therefore creating a layer of abstraction in a separate class for the pin would protect the system
         # from errors and would allow me to define the behavior of a pin in a cleaner layer
 
-        self.destination: pin
+        self.destination: Pin
         self.board = board_name
         # this is to let the pin know which board it is bound
         # to the board will always know which pins it has however
@@ -159,10 +164,10 @@ class pin():
         pass
 
 
-class esp_ins():
+class EspIns():
     """
     This is a simulated board and is used to simulate the network
-    at the current version it can not execute code on itself and is only usefeul for simulating network structures
+    at the current version it can not execute code on itself and is only useful for simulating network structures
 
     Attributes
     ----------
@@ -183,8 +188,8 @@ class esp_ins():
         the pin argument is a number from 0-39
         the address can be given in a few ways
             the pin itself can be entered as a pointer to the address
-            or a reference to the pin can be provived in this format
-                Destination_Boardl.pins[Pin_number]
+            or a reference to the pin can be provided in this format
+                Destination_Board.pins[Pin_number]
     send(pin, data)
         to send data you select a pin and the data you want to send along that pin
         the pin does not need to be connected and the program will have no issue with sending data to a pin that is not connected
@@ -210,7 +215,7 @@ class esp_ins():
         # esp32 have 320 kb of dram
         # the esp32 is a 32 bit system so there are
         # 80000 addresses
-        self.memory = memory(80000, 32)
+        self.memory = Memory(80000, 32)
 
         # the esp32 has 40 pins total not all are ATD and some are only input
         # the exact function of each pin is shown here:
@@ -218,7 +223,7 @@ class esp_ins():
 
         # only 18 are GPIO with ATD and more information about those are in
         # the definition of LBTP in the protocol directory
-        self.pins = {i: pin(self) for i in range(0, 39)}
+        self.pins = {i: Pin(self) for i in range(0, 39)}
 
         # each pin is bound to the board but some will also be bound to some other board later
 

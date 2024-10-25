@@ -11,7 +11,7 @@ class node():
     def connect(self, address):
         # this tells both nodes that they are connected to each other
         self.pin = address
-        address.pin=self
+        address.Pin=self
 
     def send(self, address):
         address.receive(self.val)
