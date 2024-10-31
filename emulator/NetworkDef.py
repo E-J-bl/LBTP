@@ -42,8 +42,8 @@ class Memory():
         self.sreg = register_size
         self.aloc = dict()
         # for explanation of this look at the malloc implementation
-        for i in range(math.ceil(address_count / (register_size + 1))):
-            self.aloc[i] = bin(0)
+        for i in range(1, math.ceil(self.size / (self.sreg + 1))):
+            self.aloc[i] = "0" * self.sreg
 
     def __getitem__(self, key: int):
         if key > self.size:
@@ -73,31 +73,33 @@ class Memory():
         self.aloc[key] = bin(value)
 
     def malloc(self, buffer):
-        found_space = False
 
-        adre = 0
-        while found_space:
-            continuous_found = 0
+        found_space = False
+        mask = "1" * (buffer + 1)
+        adre = 1
+        continuous_found = 0
+        while not found_space:
+            cur_adr = self.aloc[adre]
+
             for i in range(self.sreg):
-                if self.aloc[adre][i] == "0":
+                if cur_adr[i] == "0":
                     continuous_found += 1
+
                 else:
                     continuous_found = 0
-                if continuous_found == buffer:
-                    mask = "0" * 32
-                    for k in range(i - continuous_found, i):
-                        mask[k] = 1
+                if continuous_found > buffer:
+                    found_space = True
 
-                    self.aloc[adre] = bin(int(self.aloc[adre], 2) + int(mask, 2))
-                    print(True)
-                    return adre * 32 + i
-            adre += 1
-            if adre > math.ceil(self.size / self.sreg + 1):
+                    cur_adr = cur_adr[:i - continuous_found + 1] + mask + cur_adr[i + 1:]
+                    self.aloc[adre] = cur_adr
+
+                    return math.ceil(self.size / (self.sreg + 1)) + ((adre - 1) * self.sreg) + (i - continuous_found + 1)
+
+            if adre > math.ceil(self.size / (self.sreg + 1)):
                 found_space = True
                 # that is not working  ahhhhhh
 
         return bin(0)
-
 
     def __str__(self):
 
@@ -105,9 +107,9 @@ class Memory():
 
         for address in range(1, self.size + 1):
             if address in self.aloc:
-                output= output + (f"{self.aloc[address]:<{self.sreg + 3}}{address:<12}|",)
+                output = output + (f"{self.aloc[address]:<{self.sreg + 3}}{address:<12}|",)
             else:
-                output= output + (f"{bin(0):<{self.sreg + 3}}{address:<12}|",)
+                output = output + (f"{bin(0):<{self.sreg + 3}}{address:<12}|",)
 
         output = [output[i:i + 100] for i in range(0, len(output), 100)]
         for part in range(len(output)):
@@ -117,9 +119,9 @@ class Memory():
 
             output[part] = tuple("".join(output[part][i]) for i in range(len(output[part])))
 
-            output[part] = "\n".join(output[part]+(("-" * 130)+"\n",))
+            output[part] = "\n".join(output[part] + (("-" * 130) + "\n",))
 
-        outp = "Current memory state:\n"+"_"*130+"\n"+"".join(output)
+        outp = "Current memory state:\n" + "_" * 130 + "\n" + "".join(output)
 
         return outp
 
