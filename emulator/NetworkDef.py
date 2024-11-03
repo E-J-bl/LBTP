@@ -16,6 +16,8 @@ class Memory():
         the number of bits at each address
     aloc: dict
         The representation of which spaces in memory are allocated
+    s_look_up_table: int
+        this is the size of the look up table that is used for malloc
     Methods
     -------
     __getitem__(key:int)
@@ -44,6 +46,7 @@ class Memory():
         # for explanation of this look at the malloc implementation
         for i in range(1, math.ceil(self.size / (self.sreg + 1))):
             self.aloc[i] = "0" * self.sreg
+        self.s_look_up_stable= math.ceil(self.size / (self.sreg + 1))
 
     def __getitem__(self, key: int):
         if key > self.size:
@@ -73,7 +76,15 @@ class Memory():
         self.aloc[key] = bin(value)
 
     def malloc(self, buffer):
-
+        #find the smallest buffer that is a power of 2
+        found=False
+        counter=0
+        while not found:
+            if 2**counter>=buffer:
+                found=True
+            else:
+                counter+=1
+        buffer=counter
         found_space = False
         mask = "1" * (buffer + 1)
         adre = 1
@@ -92,12 +103,13 @@ class Memory():
 
                     cur_adr = cur_adr[:i - continuous_found + 1] + mask + cur_adr[i + 1:]
                     self.aloc[adre] = cur_adr
+                    free_space=self.s_look_up_stable + ((adre - 1) * self.sreg) + (i - continuous_found + 1)
+                    self.aloc[free_space]=f"{int(bin(buffer)[2:]):0{self.sreg}b}"
+                    return free_space
 
-                    return math.ceil(self.size / (self.sreg + 1)) + ((adre - 1) * self.sreg) + (i - continuous_found + 1)
-
-            if adre > math.ceil(self.size / (self.sreg + 1)):
+            if adre > self.s_look_up_stable:
                 found_space = True
-                # that is not working  ahhhhhh
+                #
 
         return bin(0)
 

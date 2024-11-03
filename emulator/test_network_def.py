@@ -7,6 +7,7 @@ def test_malloc():
     example[55] = 100
     print("\n", example)
 
-    adr = example.malloc(1)
-    print(adr)
+    adr = example.malloc(3)
+
     print(example)
+    print(adr)
