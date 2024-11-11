@@ -268,7 +268,7 @@ class EspIns():
     def connect_pin(self, pin, address) -> int:
         # As this is a emulator of an esp32 i have to create a function to
         # represent the act of plugging a pin into a wire
-        self.pins[pin] = address
+        self.pins[pin].destination = address
 
         return 0
 
