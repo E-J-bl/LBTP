@@ -165,7 +165,7 @@ class Pin():
     -------
     send_data(data:any)
         This function is left undefined untill the protocol called to define it
-        it would typically look like 
+        it would may look like 
             self.destination.interrupt(data)
             
     interrupt()
