@@ -36,7 +36,7 @@ class Memory():
         buffer is the number of memory spaces you want
         Returns
         _______
-            returns a start and end address where the buffer is set
+            returns a starting address where the buffer is set
     """
 
     def __init__(self, address_count, register_size):
