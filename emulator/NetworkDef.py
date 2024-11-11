@@ -46,7 +46,7 @@ class Memory():
         # for explanation of this look at the malloc implementation
         for i in range(1, math.ceil(self.size / (self.sreg + 1))):
             self.aloc[i] = "0" * self.sreg
-        self.s_look_up_stable= math.ceil(self.size / (self.sreg + 1))
+        self.s_look_up_table= math.ceil(self.size / (self.sreg + 1))
 
     def __getitem__(self, key: int):
         if key > self.size:
@@ -103,11 +103,11 @@ class Memory():
 
                     cur_adr = cur_adr[:i - continuous_found + 1] + mask + cur_adr[i + 1:]
                     self.aloc[adre] = cur_adr
-                    free_space=self.s_look_up_stable + ((adre - 1) * self.sreg) + (i - continuous_found + 1)
+                    free_space=self.s_look_up_table + ((adre - 1) * self.sreg) + (i - continuous_found + 1)
                     self.aloc[free_space]=f"{int(bin(buffer)[2:]):0{self.sreg}b}"
                     return free_space
 
-            if adre > self.s_look_up_stable:
+            if adre > self.s_look_up_table:
                 found_space = True
                 #
 
