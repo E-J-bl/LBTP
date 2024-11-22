@@ -1,8 +1,8 @@
-import NetworkDef
+import MNetworkDef
 
 
 def test_malloc():
-    example = NetworkDef.Memory(200, 10)
+    example = MNetworkDef.Memory(200, 10)
 
     example[55] = 100
     print("\n", example)
