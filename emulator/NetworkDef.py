@@ -151,9 +151,10 @@ class Memory():
 #         and so that they can claim continuous space after
 #         i have refactored the code to the specification above
 
-class Pin():
+class MPin():
     """
     A class to simulate a pin of the board 
+    this version is specific for the MEspIns of the board
 
     Attributes
     ----------
@@ -202,11 +203,13 @@ class Pin():
         pass
 
 
-class EspIns():
+class MEspIns():
     """
     This is a simulated board and is used to simulate the network
     at the current version it can not execute code on itself and is only useful for simulating network structures
 
+	This specific version of the inst is made for manual memory management. it should support opperations like malloc and free 
+    it is made to help practice more fine grain memory systems work
     Attributes
     ----------
     memory:
@@ -261,7 +264,7 @@ class EspIns():
 
         # only 18 are GPIO with ATD and more information about those are in
         # the definition of LBTP in the protocol directory
-        self.pins = {i: Pin(self) for i in range(0, 39)}
+        self.pins = {i: MPin(self) for i in range(0, 39)}
 
         # each pin is bound to the board but some will also be bound to some other board later
 
